@@ -14,34 +14,45 @@ data = pd.read_csv(path, header=None, names=['Time', 'Passenger'])
 cols = data.shape[1]
 x = data.iloc[:,cols-1:cols]
 x = x.values
-def f(x, m, to, eps):
+
+def create_recurrence_table(r, num_vectors, persent):
+	for i in range(num_vectors):
+		n = int(np.absolute(persent*num_vectors-1))
+		eps =  np.sort(r[i,:], kind='quicksort')[n]
+		for j in range(num_vectors):
+			if(r[i,j] <= eps): r[i,j] = 1
+			else: r[i,j] = 0
+
+
+def f(x, dim, tau, persent):
 	n = x.shape[0]
-	result = np.array([])
-	limit = n - (m-1)*to
-	for i in range (limit):
-		for j in range(i, limit):
-			b = np.array([])
-			for k in range(m):
-				b = np.append(b, x[i + k*to] - x[j + k*to])
-			if(eps > np.linalg.norm(b)):
-				result = np.append(result, np.array([i,j]))
-	return result
-n = x.shape[0]
-eps = 0.5*n
-m = 3
-to = 3
-result = f(x, m, to, eps)
-a =[]
-b  = []
-l = len(result)
-for i in range(l):
-	if(i % 2 == 0):
-		a.append(int(result[i]))
-	else:
-		b.append(int(result[i]))
+	num_vectors = n - (dim-1)*tau
+	r = np.zeros((num_vectors, num_vectors))
+	for i in range (num_vectors):
+		for j in range(num_vectors):
+			y = np.array([])
+			#distance between two vectors
+			for k in range(dim):
+				y = np.append(y, x[i + k*tau] - x[j + k*tau])
+			r[i, j] = np.linalg.norm(y)		
+	create_recurrence_table(r, num_vectors, persent)
+	return r
+tau = 3
+dim = 3
+persent = 0.2
+
+
+r = f(x, dim, tau, persent)
+num_vectors = r.shape[0]
+a = np.array([])
+b = np.array([])
+for i in range(num_vectors):
+	for j in range(num_vectors):
+		if(r[i,j] == 1): a = np.append(a, i); b = np.append(b, j)
 
 fig, ax = plt.subplots(figsize=(12,8))
 ax.scatter(a, b, marker = '.')
 plt.show()
+
 
 
