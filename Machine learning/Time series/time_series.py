@@ -4,16 +4,20 @@ import pandas as pd
 import os
 
 path = os.getcwd() + '\data.txt'  
-data = pd.read_csv(path, header=None, names=['Time', 'Passenger'])
+data = pd.read_csv(path, header=None)
 # print(data.head())
 # print(data.describe())
-
-# data.plot(x='Time', y='Passenger', figsize=(12,8)) 
-# plt.show()
-
+rows = data.shape[0]
 cols = data.shape[1]
-x = data.iloc[:,cols-1:cols]
-x = x.values
+x = data.values
+print(x)
+fig, ax = plt.subplots(figsize=(12,8))
+ax.plot(np.arange(rows), x, 'r') 
+plt.show()
+
+# cols = data.shape[1]
+# x = data.iloc[:,cols-1:cols]
+# x = x.values
 
 def create_recurrence_table(r, num_vectors, persent):
 	for i in range(num_vectors):
@@ -29,12 +33,13 @@ def f(x, dim, tau, persent):
 	num_vectors = n - (dim-1)*tau
 	r = np.zeros((num_vectors, num_vectors))
 	for i in range (num_vectors):
-		for j in range(num_vectors):
+		for j in range(i,num_vectors):
 			y = np.array([])
 			#distance between two vectors
 			for k in range(dim):
 				y = np.append(y, x[i + k*tau] - x[j + k*tau])
-			r[i, j] = np.linalg.norm(y)		
+			r[i, j] = np.linalg.norm(y)	
+			r[j, i]	= r[i,j]
 	create_recurrence_table(r, num_vectors, persent)
 	return r
 tau = 3
