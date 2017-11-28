@@ -32,7 +32,7 @@ def create_recurrence_table(r, num_vectors, persent):
 def recurrence(x, dim, tau, persent):
 	n = x.shape[0]
 	num_vectors = n - (dim-1)*tau
-	r = np.zeros((num_vectors, num_vectors))
+	r = np.zero((num_vectors, num_vectors))
 	for i in range (num_vectors):
 		r[i,i] = 0
 		for j in range(i+1, num_vectors):
@@ -45,14 +45,12 @@ def recurrence(x, dim, tau, persent):
 	return create_recurrence_table(r, num_vectors, persent)
 tau = 2
 dim = 3
-persent = 0.4
+persent = 0.1
 
 start = timeit.default_timer()
 r= recurrence(x, dim, tau, persent)
 stop = timeit.default_timer()
 print(stop - start) 
-a = np.zeros((r.shape[0], r.shape[1]))
-num_vectors = r.shape[0]
 # plt.imshow(r, interpolation='nearest', cmap=plt.cm.ocean,
     # extent=(0.5,np.shape(r)[0]+0.5,0.5,np.shape(r)[1]+0.5))
 plt.matshow(r)
