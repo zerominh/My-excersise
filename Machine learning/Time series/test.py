@@ -21,14 +21,13 @@ x = x.values
 
 
 def create_recurrence_table(r, num_vectors, persent):
+	recurrence_table =  np.zeros((num_vectors, num_vectors))
 	for i in range(num_vectors):
 		n = int(persent*num_vectors)
-		eps =  np.partition(r[i,:], n)[n-1]
-
-		for j in range(num_vectors):
-			if(r[i,j] <= eps): r[i,j] = 1
-			else: r[i,j] = 0;
-	return r
+		idex_arr = np.argsort(r[i,:])
+		for j in range(n):
+			recurrence_table[i,idex_arr[j]] = 1;
+	return recurrence_table
 
 def recurrence(x, dim, tau, persent):
 	n = x.shape[0]
