@@ -1,8 +1,12 @@
 ﻿using CommandLine;
 using Google.Cloud.Speech.V1;
 using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace GoogleCloudSamples
 {
@@ -12,6 +16,18 @@ namespace GoogleCloudSamples
     }
     public class Recognize
     {
+        [DllImport("User32.dll")]
+        static extern int SetForegroundWindow(IntPtr point);
+        static void SendKey(string s)
+        {
+            Process p = Process.GetProcessesByName("notepad").FirstOrDefault();
+            if (p != null)
+            {
+                IntPtr h = p.MainWindowHandle;
+                SetForegroundWindow(h);
+                SendKeys.SendWait(s);
+            }
+        }
         static async Task<object> StreamingMicRecognizeAsync(int seconds)
         {
             if (NAudio.Wave.WaveIn.DeviceCount < 1)
@@ -49,7 +65,8 @@ namespace GoogleCloudSamples
                         foreach (var alternative in result.Alternatives)
                         {
                             string s = alternative.Transcript;
-                            Console.WriteLine(s);
+                            //Console.WriteLine(s);
+                            SendKey(s);
                         }
                     }
                 }
