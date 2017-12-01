@@ -11,12 +11,14 @@ namespace SendKey
         static extern int SetForegroundWindow(IntPtr point);
         static void SendKey()
         {
-            Process p = Process.GetProcessesByName("notepad").FirstOrDefault();
+            Process p = Process.GetProcessesByName("idea64").FirstOrDefault();
             if (p != null)
             {
-                IntPtr h = p.MainWindowHandle;
-                SetForegroundWindow(h);
-                SendKeys.SendWait("k");
+                    
+                    IntPtr h = p.MainWindowHandle;
+                    SetForegroundWindow(h);
+                    SendKeys.SendWait("k");
+                    Console.ReadLine();
             }
         }
         static void Main(string[] args)

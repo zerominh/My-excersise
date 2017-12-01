@@ -1,9 +1,12 @@
 ﻿using CommandLine;
 using Google.Cloud.Speech.V1;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -12,22 +15,65 @@ namespace GoogleCloudSamples
 {
     class ListenOptions
     {
-        public int Seconds { get; set; } = 10;
+        public int Seconds { get; set; } = 50;
     }
     public class Recognize
     {
+        public static string program = "idea64";
+        public static string fileName = "data.txt";
+        public static string[] mapTable;
+        public static string s = "";
+
         [DllImport("User32.dll")]
         static extern int SetForegroundWindow(IntPtr point);
+        [DllImport("user32.dll")]
+        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
         static void SendKey(string s)
         {
-            Process p = Process.GetProcessesByName("notepad").FirstOrDefault();
-            if (p != null)
+            Process proc = Process.GetProcessesByName(program).FirstOrDefault();
+
+            if (proc != null && proc.MainWindowHandle != IntPtr.Zero)
             {
-                IntPtr h = p.MainWindowHandle;
-                SetForegroundWindow(h);
+                SetForegroundWindow(proc.MainWindowHandle);
                 SendKeys.SendWait(s);
+                Thread.Sleep(100);
+            }
+            else
+            {
+                proc.Kill();
+                Console.WriteLine("can't found process" + program);
             }
         }
+
+        static void SetMapTable()
+        {
+            const Int32 BufferSize = 128;
+            using (var fileStream = File.OpenRead(fileName))
+            using (var streamReader = new StreamReader(fileStream, Encoding.UTF8, true, BufferSize))
+            {
+                List<string> list = new List<string>();
+                string line;
+                while ((line = streamReader.ReadLine()) != null)
+                {
+                    list.Add(line);
+                }
+                mapTable = list.ToArray();
+            }
+        }
+        static string Map(string statement)
+        {
+            for (int i = 0; i < mapTable.Length; i += 2)
+            {
+                if (statement == mapTable[i])
+                {
+                    return mapTable[i + 1];
+                }
+            }
+
+            return "";
+        }
+
+
         static async Task<object> StreamingMicRecognizeAsync(int seconds)
         {
             if (NAudio.Wave.WaveIn.DeviceCount < 1)
@@ -62,11 +108,23 @@ namespace GoogleCloudSamples
                     foreach (var result in streamingCall.ResponseStream
                         .Current.Results)
                     {
-                        foreach (var alternative in result.Alternatives)
+                        if (result.IsFinal == true)
                         {
-                            string s = alternative.Transcript;
-                            //Console.WriteLine(s);
-                            SendKey(s);
+                            s = result.Alternatives[0].Transcript;
+                            //foreach (var alternative in result.Alternatives)
+                            //{
+
+                            //    //s = alternative.Transcript;
+                            //    //Console.WriteLine(s);
+                            s = s.ToLower().Trim();
+                            //s = Map(s);
+                            if (s != "")
+                            {
+                                Console.WriteLine(s);
+                                SendKey(s);
+                            }
+                            //}
+
                         }
                     }
                 }
@@ -104,6 +162,11 @@ namespace GoogleCloudSamples
 
         public static int Main(string[] args)
         {
+            if (args.Length != 0)
+            {
+                program = args[0];
+            }
+            //SetMapTable();
             return (int)Parser.Default.ParseArguments<ListenOptions
                 >(args).MapResult(
                 (ListenOptions opts) => StreamingMicRecognizeAsync(opts.Seconds).Result,
