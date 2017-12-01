@@ -8,7 +8,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 path = os.getcwd() + '\ex1data1.txt'  
 data = pd.read_csv(path, header=None, names=['Population', 'Profit'])
 
-# data.insert(0, 'Ones', 1)
+data.insert(0, 'Ones', 1)
 
 
 cols = data.shape[1]  
@@ -19,14 +19,13 @@ y = np.matrix(y.values)
 
 
 model = linear_model.LinearRegression()  
-model.fit(X, y)  
-f = model.predict(X).flatten()
+model.fit(X, y)
+f = model.predict(X)
 # fig, ax = plt.subplots(figsize=(12,8))
 # ax.scatter(data.Population, data.Profit, label='Traning Data')
 # ax.plot(X[:, 1], f, 'r', label='Prediction')
 # ax.legend() 
 # plt.show()
 
-
-print(model.coef_)
-print(mean_squared_error(f, y))
+# print(mean_squared_error(y, f))
+print(f)

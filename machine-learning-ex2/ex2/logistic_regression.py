@@ -52,59 +52,17 @@ initial_theta = np.zeros((1,X.shape[1]))
 # print(gradient(initial_theta, X, y))
 result = opt.fmin_tnc(func=costFunction, x0=initial_theta, fprime=gradient, args=(X, y))
 
-# positive = data[data['Admitted'].isin([1])]  
-# negative = data[data['Admitted'].isin([0])]
+def predict(theta, X):
+	probability = sigmoid(X*theta.T)
+	return [1 if i >= 0.5 else 0 for i in probability]
 
-# # fig, ax = plt.subplots(figsize=(12,8))  
-# # ax.scatter(positive['Exam 1'], positive['Exam 2'], s=50, c='b', marker='o', label='Admitted')  
-# # ax.scatter(negative['Exam 1'], negative['Exam 2'], s=50, c='r', marker='x', label='Not Admitted')  
-# # ax.legend()  
-# # ax.set_xlabel('Exam 1 Score')  
-# # ax.set_ylabel('Exam 2 Score') 
+theta_min = np.matrix(result[0])
 
-# def sigmoid(z):  
-#     return 1 / (1 + np.exp(-z))
-
-# def cost(theta, X, y):  
-#     theta = np.matrix(theta)
-#     X = np.matrix(X)
-#     y = np.matrix(y)
-#     first = np.multiply(-y, np.log(sigmoid(X * theta.T)))
-#     second = np.multiply((1 - y), np.log(1 - sigmoid(X * theta.T)))
-#     return np.sum(first - second) / (len(X))
-
-# # add a ones column - this makes the matrix multiplication work out easier
-# data.insert(0, 'Ones', 1)
-
-# # set X (training data) and y (target variable)
-# cols = data.shape[1]  
-# X = data.iloc[:,0:cols-1]  
-# y = data.iloc[:,cols-1:cols]
-
-# # convert to numpy arrays and initalize the parameter array theta
-# X = np.array(X.values)  
-# y = np.array(y.values)  
-# theta = np.zeros(3)  
-
-
-# def gradient(theta, X, y):  
-#     theta = np.matrix(theta)
-#     X = np.matrix(X)
-#     y = np.matrix(y)
-
-#     parameters = int(theta.ravel().shape[1])
-#     grad = np.zeros(parameters)
-
-#     error = sigmoid(X * theta.T) - y
-
-#     for i in range(parameters):
-#         term = np.multiply(error, X[:,i])
-#         grad[i] = np.sum(term) / len(X)
-
-#     return grad
-
-# result = opt.fmin_tnc(func=cost, x0=theta, fprime=gradient, args=(X, y))  
-# print(cost(result[0], X, y))
+predictions = predict(theta_min, X)
+# a and b equals (a == 1 and b == 1) or (a == 0 and b == 0)
+correct = [1 if (a == 1 and b == 1) or (a == 0 and b == 0) else 0 for (a, b) in zip(predictions, y)]
+accuracy = sum(correct)/len(correct)
+print(accuracy)
 
 
 
