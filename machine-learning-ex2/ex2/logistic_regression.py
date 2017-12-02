@@ -28,7 +28,6 @@ X = np.array(X.values)
 y = np.array(y.values)
 X = np.matrix(X)
 y = np.matrix(y)
-
 def sigmoid(z):
 	return 1.00/(1.00 + np.exp(-z))
 
@@ -39,6 +38,7 @@ def costFunction(theta, X, y):
 	return ((-y).T*np.log(h) - (1-y).T*np.log(1-h))/m
 
 def gradient(theta, X, y):
+
 	theta = np.matrix(theta)
 	parameters = int(theta.shape[1])
 	grad = np.zeros(parameters)
