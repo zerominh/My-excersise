@@ -88,7 +88,7 @@ def calculate_l_table(recurrence_table):
 		len = 0
 		for x in range(-b, rows):
 			if recurrence_table[x, x+b] == 1 : len  += 1;
-			elif len != 0 : l.append(len); len = 0;
+			elif len != 0 and len != rows : l.append(len); len = 0;
 		if len != 0 : l.append(len)
 	for b in range(1, rows):
 		len = 0

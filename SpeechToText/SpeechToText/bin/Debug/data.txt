@@ -1,0 +1,8 @@
+﻿đây
+this
+chấm
+.
+thêm đứa trẻ
+addChild
+mẹ sinh em bé
+this.addChild()
