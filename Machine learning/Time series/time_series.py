@@ -132,17 +132,19 @@ def calculate_ENTR(frequence_l_table, N):
 print('ENTR:  ' + str(calculate_ENTR(frequence_l_table, r.shape[0])))
 
 #height
-h = []
+
 def calculate_height_table(recurrence_table):
+	h = []
 	rows = r.shape[0]
 	len = 0
 	for i in range(rows):
 		for j in range(rows):
 			if recurrence_table[j, i] == 1 : len  += 1;
 			elif len != 0 : h.append(len); len = 0;
-		if len != 0 : h.append(len)
-calculate_height_table(r)
-print(h)
+		if len != 0 : h.append(len); len = 0;
+	return h
+
+print(calculate_height_table(r))
 
 
 def calculate_LAM(h_table, num_status):
