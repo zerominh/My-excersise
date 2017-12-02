@@ -13,7 +13,7 @@ data = pd.read_csv(path, header=None)
 # print(data.describe())
 rows = data.shape[0]
 cols = data.shape[1]
-x = data.iloc[0:10,cols-1:cols]
+x = data.iloc[0:12,cols-1:cols]
 x = x.values
 # fig, ax = plt.subplots(figsize=(12,12))
 # ax.plot(np.arange(x.shape[0]), x, 'r') 
@@ -22,9 +22,10 @@ x = x.values
 
 def create_recurrence_table(r, num_vectors, persent):
 	# start = timeit.default_timer()
+	cols = r.shape[1]
 	n = int(persent*num_vectors)
 	for i in range(num_vectors):
-		eps =  np.partition(r[i,:], n)[n-1]
+		eps =  np.sort(r[i,:], kind = 'heapsort')[n-1]
 		for j in range(num_vectors):
 			if(r[i,j] <= eps): r[i,j] = 1
 			else: r[i,j] = 0;
@@ -89,11 +90,11 @@ def calculate_l_table(recurrence_table):
 			if recurrence_table[x, x+b] == 1 : len  += 1;
 			elif len != 0 : l.append(len); len = 0;
 		if len != 0 : l.append(len)
-	for b in range(0, rows):
+	for b in range(1, rows):
 		len = 0
 		for x in range(0, rows-b):
 			if recurrence_table[x, x+b] == 1 : len += 1; 
-			elif len != 0: l.append(len); len = 0;
+			elif len != 0 : l.append(len); len = 0;
 		if len != 0 : l.append(len)
 	return l
 # start = timeit.default_timer()
@@ -129,6 +130,27 @@ def calculate_ENTR(frequence_l_table, N):
 	return -ENTR
 
 print('ENTR:  ' + str(calculate_ENTR(frequence_l_table, r.shape[0])))
+
+#height
+h = []
+def calculate_height_table(recurrence_table):
+	rows = r.shape[0]
+	len = 0
+	for i in range(rows):
+		for j in range(rows):
+			if recurrence_table[j, i] == 1 : len  += 1;
+			elif len != 0 : h.append(len); len = 0;
+		if len != 0 : h.append(len)
+calculate_height_table(r)
+print(h)
+
+
+def calculate_LAM(h_table, num_status):
+	return sum(h_table)/num_status
+
+print(calculate_LAM(h, r.shape[0]**2))
+
+
 
 
 
