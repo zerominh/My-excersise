@@ -1,0 +1,6 @@
+C:\Users\zero\Desktop\My-excersise\RedirectStandardInput\RedirectStandardInput\bin\Debug\RedirectStandardInput.exe.config
+C:\Users\zero\Desktop\My-excersise\RedirectStandardInput\RedirectStandardInput\bin\Debug\RedirectStandardInput.exe
+C:\Users\zero\Desktop\My-excersise\RedirectStandardInput\RedirectStandardInput\bin\Debug\RedirectStandardInput.pdb
+C:\Users\zero\Desktop\My-excersise\RedirectStandardInput\RedirectStandardInput\obj\Debug\RedirectStandardInput.csproj.CoreCompileInputs.cache
+C:\Users\zero\Desktop\My-excersise\RedirectStandardInput\RedirectStandardInput\obj\Debug\RedirectStandardInput.exe
+C:\Users\zero\Desktop\My-excersise\RedirectStandardInput\RedirectStandardInput\obj\Debug\RedirectStandardInput.pdb
