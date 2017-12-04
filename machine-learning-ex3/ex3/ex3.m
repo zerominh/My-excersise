@@ -38,7 +38,6 @@ m = size(X, 1);
 % Randomly select 100 data points to display
 rand_indices = randperm(m);
 sel = X(rand_indices(1:100), :);
-
 displayData(sel);
 
 fprintf('Program paused. Press enter to continue.\n');
@@ -75,7 +74,6 @@ fprintf('\nTraining One-vs-All Logistic Regression...\n')
 
 lambda = 0.1;
 [all_theta] = oneVsAll(X, y, num_labels, lambda);
-
 fprintf('Program paused. Press enter to continue.\n');
 pause;
 
