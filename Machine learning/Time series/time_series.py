@@ -7,7 +7,7 @@ import os
 import timeit
 
 
-path = os.getcwd() + '\data.txt'  
+path = os.getcwd() + '\data3.txt'  
 data = pd.read_csv(path, header=None)
 # print(data.head())
 # print(data.describe())
@@ -81,7 +81,7 @@ plt.show()
 
 
 
-print(r)
+# print(r)
 l = []
 def calculate_l_table(recurrence_table):
 	rows =  recurrence_table.shape[0]
