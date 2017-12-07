@@ -4,4 +4,3 @@ C:\Users\zero\Desktop\My-excersise\SendKey\SendKey\bin\Debug\SendKey.pdb
 C:\Users\zero\Desktop\My-excersise\SendKey\SendKey\obj\Debug\SendKey.csproj.CoreCompileInputs.cache
 C:\Users\zero\Desktop\My-excersise\SendKey\SendKey\obj\Debug\SendKey.exe
 C:\Users\zero\Desktop\My-excersise\SendKey\SendKey\obj\Debug\SendKey.pdb
-C:\Users\zero\Desktop\My-excersise\SendKey\SendKey\obj\Debug\SendKey.csprojResolveAssemblyReference.cache

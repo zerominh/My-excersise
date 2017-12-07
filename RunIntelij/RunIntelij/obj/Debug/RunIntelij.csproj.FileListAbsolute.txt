@@ -1,0 +1,6 @@
+C:\Users\zero\Desktop\My-excersise\RunIntelij\RunIntelij\obj\Debug\RunIntelij.csproj.CoreCompileInputs.cache
+C:\Users\zero\Desktop\My-excersise\RunIntelij\RunIntelij\bin\Debug\RunIntelij.exe.config
+C:\Users\zero\Desktop\My-excersise\RunIntelij\RunIntelij\bin\Debug\RunIntelij.exe
+C:\Users\zero\Desktop\My-excersise\RunIntelij\RunIntelij\bin\Debug\RunIntelij.pdb
+C:\Users\zero\Desktop\My-excersise\RunIntelij\RunIntelij\obj\Debug\RunIntelij.exe
+C:\Users\zero\Desktop\My-excersise\RunIntelij\RunIntelij\obj\Debug\RunIntelij.pdb

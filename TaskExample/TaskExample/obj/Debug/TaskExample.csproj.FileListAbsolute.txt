@@ -1,0 +1,6 @@
+C:\Users\zero\Desktop\My-excersise\TaskExample\TaskExample\bin\Debug\TaskExample.exe.config
+C:\Users\zero\Desktop\My-excersise\TaskExample\TaskExample\bin\Debug\TaskExample.exe
+C:\Users\zero\Desktop\My-excersise\TaskExample\TaskExample\bin\Debug\TaskExample.pdb
+C:\Users\zero\Desktop\My-excersise\TaskExample\TaskExample\obj\Debug\TaskExample.csproj.CoreCompileInputs.cache
+C:\Users\zero\Desktop\My-excersise\TaskExample\TaskExample\obj\Debug\TaskExample.exe
+C:\Users\zero\Desktop\My-excersise\TaskExample\TaskExample\obj\Debug\TaskExample.pdb
