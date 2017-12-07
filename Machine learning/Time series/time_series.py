@@ -7,13 +7,13 @@ import os
 import timeit
 
 
-path = os.getcwd() + '\data.txt'  
+path = os.getcwd() + '\data3.txt'  
 data = pd.read_csv(path, header=None)
 # print(data.head())
 # print(data.describe())
 rows = data.shape[0]
 cols = data.shape[1]
-x = data.iloc[0:12,cols-1:cols]
+x = data.iloc[:,cols-1:cols]
 x = x.values
 # fig, ax = plt.subplots(figsize=(12,12))
 # ax.plot(np.arange(x.shape[0]), x, 'r') 
@@ -34,7 +34,7 @@ def create_recurrence_table(r, num_vectors, persent):
 	return r
 
 def recurrence(x, dim, tau, persent):
-	start = timeit.default_timer()
+	# start = timeit.default_timer()
 	n = x.shape[0]
 	num_vectors = n - (dim-1)*tau
 	r = np.zeros((num_vectors, num_vectors))
@@ -47,39 +47,41 @@ def recurrence(x, dim, tau, persent):
 				y += (x[i + k*tau] - x[j + k*tau])**2.00	
 			r[i, j] = math.sqrt(y)
 			r[j, i]	= r[i,j]
-	stop = timeit.default_timer()
-	print(stop - start)
+	# stop = timeit.default_timer()
+	# print(stop - start)
 	return create_recurrence_table(r, num_vectors, persent)
-tau = 2
+tau = 3
 dim = 3
-persent = 0.4
+persent = 0.2
+start = timeit.default_timer()
 r = recurrence(x, dim, tau, persent)
- 
+stop = timeit.default_timer()
+print(stop - start) 
 
 
 #plot transpose of r
-# a = np.array(r.T)
-# rows = a.shape[0]
-# cols = a.shape[1]
-# iter_row_from_0= []
-# for i in range(int(rows/2)):
-# 	iter_row_from_0.append(i)
-# iter_row_from_1 = []
-# for i in range(1,int(rows/2)+1):
-# 	iter_row_from_1.append(-i)
-# for i, j in zip(iter_row_from_0, iter_row_from_1):
-# 	temp = np.array(a[i,:])
-# 	a[i,:] = a[j,:]
-# 	a[j,:] = temp	
-# plt.imshow(a, interpolation='nearest', cmap=plt.cm.ocean,
-#     extent=(0.5,np.shape(a)[0]+0.5,0.5,np.shape(a)[1]+0.5))
-# # plt.matshow(r)
-# plt.show()
+a = np.array(r.T)
+rows = a.shape[0]
+cols = a.shape[1]
+iter_row_from_0= []
+for i in range(int(rows/2)):
+	iter_row_from_0.append(i)
+iter_row_from_1 = []
+for i in range(1,int(rows/2)+1):
+	iter_row_from_1.append(-i)
+for i, j in zip(iter_row_from_0, iter_row_from_1):
+	temp = np.array(a[i,:])
+	a[i,:] = a[j,:]
+	a[j,:] = temp	
+plt.imshow(a, interpolation='nearest', cmap=plt.cm.ocean,
+    extent=(0.5,np.shape(a)[0]+0.5,0.5,np.shape(a)[1]+0.5))
+# plt.matshow(r)
+plt.show()
 
 
 
 
-print(r)
+# print(r)
 l = []
 def calculate_l_table(recurrence_table):
 	rows =  recurrence_table.shape[0]
@@ -99,14 +101,15 @@ def calculate_l_table(recurrence_table):
 	return l
 # start = timeit.default_timer()
 l_table = calculate_l_table(r)
-print(l_table)
+print(np.max(l_table))
+# print(l_table)
 # stop = timeit.default_timer()
 # print(stop - start) 
 frequence_l_table = [0]*(r.shape[0]+1)
 
 for i in l_table:
 	frequence_l_table[i] += 1;
-print(frequence_l_table)
+# print(frequence_l_table)
 def calculate_DET(l_table, N):
 	return sum(l_table)/ float(N*N)
 
@@ -140,15 +143,29 @@ def calculate_height_table(recurrence_table):
 		for j in range(rows):
 			if recurrence_table[j, i] == 1 : len  += 1;
 			elif len != 0 : h.append(len); len = 0;
+<<<<<<< HEAD
 		if len != 0 : h.append(len)
 calculate_height_table(r)
 print(h)
+=======
+		if len != 0 : h.append(len); len = 0;
+	return h
+
+h = calculate_height_table(r)
+# print(h)
 
 
-def calculate_LAM(h_table, num_status):
-	return sum(h_table)/num_status
+def calculate_LAM(h_table):
+	return sum(h_table)/(len(h_table)**2)
 
-print(calculate_LAM(h, r.shape[0]**2))
+print("LAM: " + str(calculate_LAM(h)))
+>>>>>>> f2666acf8487e0e93f9e155422131e0d36e2d040
+
+def calculate_TT(h_table):
+	return sum(h_table)/(len(h_table))
+
+
+print("TT: " + str(calculate_TT(h)))
 
 
 
