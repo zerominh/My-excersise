@@ -101,6 +101,7 @@ def calculate_l_table(recurrence_table):
 	return l
 # start = timeit.default_timer()
 l_table = calculate_l_table(r)
+print(np.max(l_table))
 # print(l_table)
 # stop = timeit.default_timer()
 # print(stop - start) 
