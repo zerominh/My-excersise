@@ -13,10 +13,10 @@ using System.Windows.Forms;
 
 namespace GoogleCloudSamples
 {
-    class ListenOptions
-    {
-        public int Seconds { get; set; } = 50;
-    }
+    //class ListenOptions
+    //{
+    //    public int Seconds { get; set; } = 10;
+    //}
     public class Recognize
     {
         public static string program = "idea64";
@@ -36,7 +36,6 @@ namespace GoogleCloudSamples
             {
                 SetForegroundWindow(proc.MainWindowHandle);
                 SendKeys.SendWait(s);
-                Thread.Sleep(100);
             }
             else
             {
@@ -111,11 +110,6 @@ namespace GoogleCloudSamples
                         if (result.IsFinal == true)
                         {
                             s = result.Alternatives[0].Transcript;
-                            //foreach (var alternative in result.Alternatives)
-                            //{
-
-                            //    //s = alternative.Transcript;
-                            //    //Console.WriteLine(s);
                             s = s.ToLower().Trim();
                             //s = Map(s);
                             if (s != "")
@@ -167,11 +161,9 @@ namespace GoogleCloudSamples
                 program = args[0];
             }
             //SetMapTable();
-            return (int)Parser.Default.ParseArguments<ListenOptions
-                >(args).MapResult(
-                (ListenOptions opts) => StreamingMicRecognizeAsync(opts.Seconds).Result,
-                errs => 1);
-
+            Task t = Task.Run(() => StreamingMicRecognizeAsync(10).Result);
+            t.Wait();
+            return 0;
         }
     }
 }
