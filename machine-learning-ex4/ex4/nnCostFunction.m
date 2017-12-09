@@ -67,18 +67,40 @@ for i =  1: m
 	y_training(i, y(i)) = 1;
 end
 
-
-
+  
 X = [ones(m, 1) X];
-a2 = sigmoid(X*Theta1');
+a1 = X;
+z2 = a1*Theta1';
+a2 = sigmoid(z2);
+z2 = [ones(size(z2, 1), 1) z2];
 a2 = [ones(size(a2, 1), 1) a2];
-h = sigmoid(a2*Theta2');
+z3 = a2*Theta2';
+a3 = sigmoid(z3);
+h = a3;
 J = sum(sum((-y_training).*log(h) - (1-y_training).*log(1-h)))/(m);
 reg = (sum(sum(Theta1(:, 2:end).^2)) + sum(sum(Theta2(:, 2:end).^2)))*(lambda/(2*m));
 J = J + reg;
 
 
+tri_delta1 = 0;
+tri_delta2 = 0;
 
+delta3 = a3 - y_training;
+
+delta2 = (delta3*Theta2).*sigmoidGradient(z2);
+
+delta2 = delta2(:, 2:end);
+
+tri_delta1 = tri_delta1 + delta2'*a1;
+tri_delta2 = tri_delta2 + delta3'*a2;
+	
+
+D1 = tri_delta1 / m;
+D2 = tri_delta2 / m;
+D1 = D1 + (lambda*[zeros(size(Theta1, 1), 1) Theta1(:, 2:end)])/m;
+D2 = D2 + (lambda*[zeros(size(Theta2, 1), 1) Theta2(:, 2:end)])/m;
+Theta1_grad = Theta1_grad + D1;
+Theta2_grad = Theta2_grad + D2;
 
 
 

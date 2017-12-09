@@ -13,7 +13,7 @@ data = pd.read_csv(path, header=None)
 # print(data.describe())
 rows = data.shape[0]
 cols = data.shape[1]
-x = data.iloc[:,cols-1:cols]
+x = data.iloc[0:10,cols-1:cols]
 x = x.values
 # fig, ax = plt.subplots(figsize=(12,12))
 # ax.plot(np.arange(x.shape[0]), x, 'r') 
@@ -50,9 +50,9 @@ def recurrence(x, dim, tau, persent):
 	# stop = timeit.default_timer()
 	# print(stop - start)
 	return create_recurrence_table(r, num_vectors, persent)
-tau = 3
+tau = 2
 dim = 3
-persent = 0.2
+persent = 0.4
 start = timeit.default_timer()
 r = recurrence(x, dim, tau, persent)
 stop = timeit.default_timer()
@@ -77,11 +77,19 @@ print(stop - start)
 #     extent=(0.5,np.shape(a)[0]+0.5,0.5,np.shape(a)[1]+0.5))
 # # plt.matshow(r)
 # plt.show()
+a = []
+b = []
+n = r.shape[0]
+for i in range(n):
+	for j in range(n):
+		if(r[i, j] == 1):
+			a.append(i)
+			b.append(j)
 
+plt.scatter(a, b, s = 0.1, marker = '.')
+plt.show()
 
-
-
-# print(r)
+print(r)
 def calculate_l_table(recurrence_table):
 	frequence_l_table = [0]*(recurrence_table.shape[0])
 	rows =  recurrence_table.shape[0]
@@ -160,10 +168,11 @@ def calculate_height_table(recurrence_table):
 		for j in range(rows):
 			if recurrence_table[j, i] == 1 : len  += 1;
 			elif len != 0 : h.append(len); len = 0;
-		if len != 0 : h.append(len)
+		if len != 0 : h.append(len); len = 0;
 	return h
 
 h = calculate_height_table(r)
+print(h)
 print("V: " + str(np.max(h)))
 
 def calculate_LAM(h_table, n):
@@ -181,8 +190,10 @@ print("TT: " + str(calculate_TT(h)))
 # def calculate_T1(recurrence_table):
 # 	n = len(recurrence_table)
 # 	sum_t = 0
+# 	prev_t = 0
+# 	curr_t = 0
 # 	for i in range(n):
 # 		for j in range(n):
-# 			if(recurrence_table[i, j] == 1): sum_t += (j - i)
+			
 			
 
