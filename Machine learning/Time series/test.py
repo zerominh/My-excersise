@@ -14,9 +14,9 @@ rows = data.shape[0]
 cols = data.shape[1]
 x = data.iloc[:, cols - 1:cols]
 x = x.values
-fig, ax = plt.subplots(figsize=(12, 12))
-ax.plot(np.arange(x.shape[0]), x, 'r')
-plt.show()
+# fig, ax = plt.subplots(figsize=(12, 12))
+# ax.plot(np.arange(x.shape[0]), x, 'r')
+# plt.show()
 
 
 # #generate data
@@ -46,7 +46,7 @@ def create_recurrence_table(r, num_vectors, persent):
                 r[i, j] = 0;
     # stop = timeit.default_timer()
     # print(stop - start)
-    return r
+    return r, n
 
 
 # def recurrence1(x, dim, tau, persent):
@@ -93,12 +93,12 @@ def recurrence(x, dim, tau, persent):
     return create_recurrence_table(r, num_vectors, persent)
 
 
-tau = 2
+tau = 3
 dim = 6
-persent = 0.01
+persent = 0.1
 start = timeit.default_timer()
 # r = recurrence(samples, dim, tau, persent)
-r = recurrence(x, dim, tau, persent)
+r, num_point = recurrence(x, dim, tau, persent)
 stop = timeit.default_timer()
 print(stop - start)
 
@@ -132,7 +132,7 @@ for i in range(n):
 plt.scatter(a, b, s=1, marker='.')
 plt.show()
 
-
+start = timeit.default_timer()
 def calculate_l_table(recurrence_table):
     frequence_l_table_temp = [0] * (recurrence_table.shape[0])
     rows = recurrence_table.shape[0]
@@ -269,63 +269,114 @@ def calculate_TT(h_table):
 
 print("TT: " + str(calculate_TT(h)))
 
-def calculate_t1(recurrence_table):
+# def calculate_t1(recurrence_table):
+#     t1_avarage = 0.00
+#     t1 = []
+#     num_vector = len(recurrence_table)
+#     for i in range(num_vector):
+#         sum_t = 0
+#         prev_t = 0
+#         num_t = 0
+#         j = 0
+#         while((j < num_vector) and (recurrence_table[i, j] != 1)):
+#             j += 1
+#         prev_t = j
+#         j += 1
+#         while (j < num_vector):
+#             if(recurrence_table[i,j] == 1):
+#                 sum_t += (j - prev_t)
+#                 prev_t = j
+#                 num_t += 1
+#             j += 1
+#         t1.append(sum_t/(num_t))
+#     t1_avarage = sum(t1)/len(t1)
+#     return t1_avarage
+
+
+# print("T1: " + str(calculate_t1(r)))
+
+def calculate_t1(recurrence_table, num_point):
     t1_avarage = 0.00
     t1 = []
     num_vector = len(recurrence_table)
     for i in range(num_vector):
-        sum_t = 0
         prev_t = 0
-        num_t = 0
         j = 0
         while((j < num_vector) and (recurrence_table[i, j] != 1)):
             j += 1
         prev_t = j
-        j += 1
-        while (j < num_vector):
-            if(recurrence_table[i,j] == 1):
-                sum_t += (j - prev_t)
-                prev_t = j
-                num_t += 1
-            j += 1
-        t1.append(sum_t/(num_t))
+        j = num_vector - 1
+        while(j >= 0  and recurrence_table[i, j] != 1):
+        	j -= 1
+        sum_t = j - prev_t
+        t1.append(sum_t/(num_point - 1))
     t1_avarage = sum(t1)/len(t1)
     return t1_avarage
 
 
-print("T1: " + str(calculate_t1(r)))
+print("T1: " + str(calculate_t1(r, num_point)))
+
+# def calculate_t2(recurrence_table):
+#     t2_avarage = 0.00
+#     t2 = []
+#     num_vector = len(recurrence_table)
+#     for i in range(num_vector):
+#         sum_t = 0
+#         prev_t = 0
+#         num_t = 0
+#         j = 0
+#         while(j < num_vector and recurrence_table[i, j] != 1):
+#             j += 1
+#         prev_t = j
+#         j += 1
+#         while(j < num_vector):
+#             if(recurrence_table[i,j] == 0):
+#                 if(j + 1 < num_vector):
+#                     if(recurrence_table[i, j+1] == 1):
+#                         sum_t += (j+1 - prev_t)
+#                         prev_t = j+1
+#                         num_t += 1
+#             j += 1
+#         if(num_t == 0):
+#             t2.append(sum_t)
+#         else: t2.append(sum_t/num_t)
+#     t2_avarage = sum(t2) / len(t2)
+#     return t2_avarage
 
 
+# print("T2: " + str(calculate_t2(r)))
 
-def calculate_t2(recurrence_table):
+def calculate_t22(recurrence_table):
     t2_avarage = 0.00
     t2 = []
     num_vector = len(recurrence_table)
+    prev_t = 0
+    next_t = 0
+    sum_t = 0
     for i in range(num_vector):
-        sum_t = 0
-        prev_t = 0
         num_t = 0
+        
         j = 0
-        while(j < num_vector and recurrence_table[i, j] != 1):
+        while(j < num_vector and recurrence_table[i, j] == 0):
             j += 1
         prev_t = j
-        j += 1
+        next_t = j
         while(j < num_vector):
-            if(recurrence_table[i,j] == 0):
-                if(j + 1 < num_vector):
-                    if(recurrence_table[i, j+1] == 1):
-                        sum_t += (j+1 - prev_t)
-                        prev_t = j+1
-                        num_t += 1
-            j += 1
-        if(num_t == 0):
+        	next_t = j
+        	while(j < num_vector and recurrence_table[i,j] == 1):
+        		j += 1
+        	while(j < num_vector and recurrence_table[i,j] == 0):
+        		j += 1
+        	num_t += 1
+        sum_t = next_t - prev_t
+        if((num_t-1) == 0):
             t2.append(sum_t)
-        else: t2.append(sum_t/num_t)
+        else: t2.append(sum_t/(num_t-1))
     t2_avarage = sum(t2) / len(t2)
     return t2_avarage
 
 
-print("T2: " + str(calculate_t2(r)))
+print("T22: " + str(calculate_t22(r)))
 
 
 def RR(recurrence_table):
@@ -334,3 +385,7 @@ def RR(recurrence_table):
 
 
 print("RR: " + str(RR(r)))
+
+
+stop = timeit.default_timer()
+print(stop - start)
