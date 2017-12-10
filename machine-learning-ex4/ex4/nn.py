@@ -53,3 +53,7 @@ def feed_forward(X, theta1, theta2):
     z2 = a1*theta1.T
     a2 = sigmoid(z2)
     a2 = np.insert(a1, 0, values=1, axis=1)
+    z3 = a2*theta2.T
+    a3 = sigmoid(z3)
+    h = a3
+    
