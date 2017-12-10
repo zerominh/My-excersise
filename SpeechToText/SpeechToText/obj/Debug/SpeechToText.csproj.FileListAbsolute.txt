@@ -51,3 +51,4 @@ C:\Users\zero\Desktop\My-excersise\SpeechToText\SpeechToText\bin\Debug\System.In
 C:\Users\zero\Desktop\My-excersise\SpeechToText\SpeechToText\obj\Debug\SpeechToText.csproj.CoreCompileInputs.cache
 C:\Users\zero\Desktop\My-excersise\SpeechToText\SpeechToText\obj\Debug\SpeechToText.exe
 C:\Users\zero\Desktop\My-excersise\SpeechToText\SpeechToText\obj\Debug\SpeechToText.pdb
+C:\Users\zero\Desktop\My-excersise\SpeechToText\SpeechToText\obj\Debug\SpeechToText.csprojResolveAssemblyReference.cache
