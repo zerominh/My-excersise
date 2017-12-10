@@ -7,23 +7,38 @@ import os
 import timeit
 
 
-path = os.getcwd() + '\data3.txt'  
-data = pd.read_csv(path, header=None)
-# print(data.head())
-# print(data.describe())
-rows = data.shape[0]
-cols = data.shape[1]
-x = data.iloc[0:10,cols-1:cols]
-x = x.values
+# path = os.getcwd() + '\data2.txt'  
+# data = pd.read_csv(path, header=None)
+# # print(data.head())
+# # print(data.describe())
+# rows = data.shape[0]
+# cols = data.shape[1]
+# x = data.iloc[:,cols-1:cols]
+# x = x.values
 # fig, ax = plt.subplots(figsize=(12,12))
 # ax.plot(np.arange(x.shape[0]), x, 'r') 
 # plt.show()
 
 
+
+#generate data
+volume = 0.5     # range [0.0, 1.0]
+fs = 44100      # sampling rate, Hz, must be integer
+duration = 0.1   # in seconds, may be float
+f = 440.0        # sine frequency, Hz, may be float
+
+# generate samples, note conversion to float32 array
+samples = (np.tan(2*np.pi*np.arange(fs*duration)*f/fs)).astype(np.float32)
+fig, ax = plt.subplots(figsize=(12,12))
+ax.plot(np.arange(len(samples)), samples, 'r') 
+plt.show()
+
 def create_recurrence_table(r, num_vectors, persent):
 	# start = timeit.default_timer()
 	cols = r.shape[1]
 	n = int(persent*num_vectors)
+	if(n == 0): n = 1;
+	# print(n)
 	for i in range(num_vectors):
 		eps =  np.sort(r[i,:], kind = 'heapsort')[n-1]
 		for j in range(num_vectors):
@@ -49,12 +64,13 @@ def recurrence(x, dim, tau, persent):
 			r[j, i]	= r[i,j]
 	# stop = timeit.default_timer()
 	# print(stop - start)
+	# print("  ban dau: " + str(r))
 	return create_recurrence_table(r, num_vectors, persent)
-tau = 2
-dim = 3
-persent = 0.4
+tau = 90
+dim = 40
+persent = 0.01
 start = timeit.default_timer()
-r = recurrence(x, dim, tau, persent)
+r = recurrence(samples, dim, tau, persent)
 stop = timeit.default_timer()
 print(stop - start) 
 
@@ -89,7 +105,7 @@ for i in range(n):
 plt.scatter(a, b, s = 0.1, marker = '.')
 plt.show()
 
-print(r)
+# print(r)
 def calculate_l_table(recurrence_table):
 	frequence_l_table = [0]*(recurrence_table.shape[0])
 	rows =  recurrence_table.shape[0]
@@ -166,13 +182,13 @@ def calculate_height_table(recurrence_table):
 	for i in range(rows):
 		len = 0
 		for j in range(rows):
-			if recurrence_table[j, i] == 1 : len  += 1;
+			if recurrence_table[i, j] == 1 : len  += 1;
 			elif len != 0 : h.append(len); len = 0;
-		if len != 0 : h.append(len); len = 0;
+		if len != 0 : h.append(len);
 	return h
 
 h = calculate_height_table(r)
-print(h)
+# print(h)
 print("V: " + str(np.max(h)))
 
 def calculate_LAM(h_table, n):
@@ -188,6 +204,7 @@ print("TT: " + str(calculate_TT(h)))
 
 
 # def calculate_T1(recurrence_table):
+# 	T1 = []
 # 	n = len(recurrence_table)
 # 	sum_t = 0
 # 	prev_t = 0
