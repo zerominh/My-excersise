@@ -12,7 +12,7 @@ data = pd.read_csv(path, header=None)
 # print(data.describe())
 rows = data.shape[0]
 cols = data.shape[1]
-x = data.iloc[:, cols - 1:cols]
+x = data.iloc[0:10, cols - 1:cols]
 x = x.values
 # fig, ax = plt.subplots(figsize=(12, 12))
 # ax.plot(np.arange(x.shape[0]), x, 'r')
@@ -69,6 +69,30 @@ def create_recurrence_table(r, num_vectors, persent):
 #     return create_recurrence_table(r, num_vectors, persent)
 
 
+# def recurrence1(x, dim, tau, persent):
+#     # start = timeit.default_timer()
+#     n = x.shape[0]
+#     num_vectors = n - (dim - 1) * tau
+#     r = np.zeros((num_vectors, num_vectors))
+#     distance_table = np.zeros((n, n))
+#     for i in range(n):
+#         for j in range(i + 1, n):
+#             distance_table[i, j] = (x[i] - x[j])*(x[i]- x[j])
+#     for i in range(num_vectors):
+#         r[i, i] = 0
+#         for j in range(i + 1, num_vectors):
+#             y = 0.00
+#             # distance between two vectors
+#             for k in range(dim):
+#                 y += distance_table[i + k * tau, j + k * tau]
+#             r[i, j] = math.sqrt(y)
+#             r[j, i] = r[i, j]
+#     # stop = timeit.default_timer()
+#     # print(stop - start)
+#     # print("  ban dau: " + str(r))
+#     return create_recurrence_table(r, num_vectors, persent)
+
+
 def recurrence(x, dim, tau, persent):
     # start = timeit.default_timer()
     n = x.shape[0]
@@ -83,19 +107,21 @@ def recurrence(x, dim, tau, persent):
         for j in range(i + 1, num_vectors):
             y = 0.00
             # distance between two vectors
-            for k in range(dim):
-                y += distance_table[i + k * tau, j + k * tau]
+            if(i >= tau and j >= tau and r[i - tau, j - tau] > 0):
+                y = r[i - tau, j - tau] - distance_table[i - tau, j - tau] + distance_table[i + (dim-1)*tau, j + (dim - 1)*tau]
+            else:
+                for k in range(dim):
+                    y += distance_table[i + k * tau, j + k * tau]
             r[i, j] = math.sqrt(y)
             r[j, i] = r[i, j]
     # stop = timeit.default_timer()
     # print(stop - start)
-    # print("  ban dau: " + str(r))
+    print(r)
     return create_recurrence_table(r, num_vectors, persent)
 
-
-tau = 3
-dim = 6
-persent = 0.1
+tau = 2
+dim = 3
+persent = 0.2
 start = timeit.default_timer()
 # r = recurrence(samples, dim, tau, persent)
 r, num_point = recurrence(x, dim, tau, persent)
@@ -203,6 +229,8 @@ def calculate_MDL(frequence_l_table):
         if (frequence_l_table[i] != 0):
             s += frequence_l_table[i] * i
             num_l += frequence_l_table[i]
+    if(num_l == 0):
+        return s
     return s / num_l
 
 
