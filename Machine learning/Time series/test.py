@@ -12,24 +12,26 @@ data = pd.read_csv(path, header=None)
 # print(data.describe())
 rows = data.shape[0]
 cols = data.shape[1]
-x = data.iloc[0:10, cols - 1:cols]
+x = data.iloc[:, cols - 1:cols]
 x = x.values
 # fig, ax = plt.subplots(figsize=(12, 12))
 # ax.plot(np.arange(x.shape[0]), x, 'r')
 # plt.show()
 
 
-# #generate data
-# volume = 0.5     # range [0.0, 1.0]
-# fs = 44100      # sampling rate, Hz, must be integer
-# duration = 0.1   # in seconds, may be float
-# f = 440.0        # sine frequency, Hz, may be float
-#
-# # generate samples, note conversion to float32 array
-# samples = (np.sin(2*np.pi*np.arange(fs*duration)*f/fs)).astype(np.float32)
-# fig, ax = plt.subplots(figsize=(12,12))
-# ax.plot(np.arange(len(samples)), samples, 'r')
-# plt.show()
+#generate data
+volume = 0.5     # range [0.0, 1.0]
+fs = 44100      # sampling rate, Hz, must be integer
+duration = 0.1   # in seconds, may be float
+f = 440.0        # sine frequency, Hz, may be float
+
+# generate samples, note conversion to float32 array
+samples = (np.sin(2*np.pi*np.arange(fs*duration)*f/fs)).astype(np.float32)
+fig, ax = plt.subplots(figsize=(12,12))
+ax.plot(np.arange(len(samples)), samples, 'r')
+plt.show()
+
+
 
 def create_recurrence_table(r, num_vectors, persent):
     # start = timeit.default_timer()
@@ -103,28 +105,30 @@ def recurrence(x, dim, tau, persent):
         for j in range(i + 1, n):
             distance_table[i, j] = (x[i] - x[j])*(x[i]- x[j])
     for i in range(num_vectors):
-        r[i, i] = 0
         for j in range(i + 1, num_vectors):
             y = 0.00
             # distance between two vectors
-            if(i >= tau and j >= tau and r[i - tau, j - tau] > 0):
+            if(i >= tau):
                 y = r[i - tau, j - tau] - distance_table[i - tau, j - tau] + distance_table[i + (dim-1)*tau, j + (dim - 1)*tau]
             else:
                 for k in range(dim):
                     y += distance_table[i + k * tau, j + k * tau]
-            r[i, j] = math.sqrt(y)
-            r[j, i] = r[i, j]
+            r[i, j] = y
+    for i in range(num_vectors):
+        for j in range(i + 1, num_vectors):
+            r[i, j] = math.sqrt(r[i,j])
+            r[j, i] = r[i,j]
     # stop = timeit.default_timer()
     # print(stop - start)
-    print(r)
+    # print(r)
     return create_recurrence_table(r, num_vectors, persent)
 
-tau = 2
-dim = 3
-persent = 0.2
+tau = 30
+dim = 60
+persent = 0.1
 start = timeit.default_timer()
-# r = recurrence(samples, dim, tau, persent)
-r, num_point = recurrence(x, dim, tau, persent)
+r, num_point = recurrence(samples, dim, tau, persent)
+# r, num_point = recurrence(x, dim, tau, persent)
 stop = timeit.default_timer()
 print(stop - start)
 
@@ -146,6 +150,7 @@ print(stop - start)
 #     extent=(0.5,np.shape(a)[0]+0.5,0.5,np.shape(a)[1]+0.5))
 # # plt.matshow(r)
 # plt.show()
+
 a = []
 b = []
 n = r.shape[0]
@@ -163,38 +168,40 @@ def calculate_l_table(recurrence_table):
     frequence_l_table_temp = [0] * (recurrence_table.shape[0])
     rows = recurrence_table.shape[0]
     cols = recurrence_table.shape[1]
-    max_l = 0
     for b in range(-rows + 1, 0):
         len = 0
         for x in range(-b, rows):
             if recurrence_table[x, x + b] == 1:
                 len += 1
             elif len != 0:
-                if(max_l < len): max_l = len
                 frequence_l_table_temp[len] += 1
                 len = 0
         if len != 0:
             frequence_l_table_temp[len] += 1
-            if(max_l < len): max_l = len
     for b in range(1, rows):
         len = 0
         for x in range(0, rows - b):
             if recurrence_table[x, x + b] == 1:
                 len += 1;
             elif len != 0:
-                if (max_l < len): max_l = len
                 frequence_l_table_temp[len] += 1;
                 len = 0;
         if len != 0:
             frequence_l_table_temp[len] += 1
-            if (max_l < len): max_l = len
-    return max_l, frequence_l_table_temp
+    return frequence_l_table_temp
 
 
 # start = timeit.default_timer()
-max_l, frequence_l_table = calculate_l_table(r)
-print('L: ' + str(max_l))
+frequence_l_table = calculate_l_table(r)
+def max_l(frequence_l_table):
+    for i in range(len(frequence_l_table)- 1, 0, -1):
+        if(frequence_l_table[i] > 0):
+            return i
+    return 0
 
+
+
+print('L: ' + str(max_l(frequence_l_table)))
 # print(l_table)
 # stop = timeit.default_timer()
 # print(stop - start) 
@@ -259,25 +266,21 @@ def calculate_height_table(recurrence_table):
     h = []
     rows = r.shape[0]
     len = 0
-    max_v = 0
     for i in range(rows):
         len = 0
         for j in range(rows):
             if recurrence_table[i, j] == 1:
                 len += 1;
             elif len != 0:
-                if(len > max_v): max_v = len
                 h.append(len)
                 len = 0
         if len != 0:
             h.append(len)
-            if (len > max_v):
-                max_v = len
-    return max_v, h
+    return h
 
 
-max_v, h = calculate_height_table(r)
-print("V: " + str(max_v))
+h = calculate_height_table(r)
+print("V: " + str(np.max(h)))
 
 # print(h)
 

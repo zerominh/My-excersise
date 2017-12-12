@@ -12,24 +12,26 @@ data = pd.read_csv(path, header=None)
 # print(data.describe())
 rows = data.shape[0]
 cols = data.shape[1]
-x = data.iloc[0:10, cols - 1:cols]
+x = data.iloc[:, cols - 1:cols]
 x = x.values
 # fig, ax = plt.subplots(figsize=(12, 12))
 # ax.plot(np.arange(x.shape[0]), x, 'r')
 # plt.show()
 
 
-# #generate data
+#generate data
 # volume = 0.5     # range [0.0, 1.0]
 # fs = 44100      # sampling rate, Hz, must be integer
 # duration = 0.1   # in seconds, may be float
 # f = 440.0        # sine frequency, Hz, may be float
-#
+
 # # generate samples, note conversion to float32 array
 # samples = (np.sin(2*np.pi*np.arange(fs*duration)*f/fs)).astype(np.float32)
 # fig, ax = plt.subplots(figsize=(12,12))
 # ax.plot(np.arange(len(samples)), samples, 'r')
 # plt.show()
+
+
 
 def create_recurrence_table(r, num_vectors, persent):
     # start = timeit.default_timer()
@@ -69,31 +71,7 @@ def create_recurrence_table(r, num_vectors, persent):
 #     return create_recurrence_table(r, num_vectors, persent)
 
 
-def recurrence(x, dim, tau, persent):
-    # start = timeit.default_timer()
-    n = x.shape[0]
-    num_vectors = n - (dim - 1) * tau
-    r = np.zeros((num_vectors, num_vectors))
-    distance_table = np.zeros((n, n))
-    for i in range(n):
-        for j in range(i + 1, n):
-            distance_table[i, j] = (x[i] - x[j])*(x[i]- x[j])
-    for i in range(num_vectors):
-        r[i, i] = 0
-        for j in range(i + 1, num_vectors):
-            y = 0.00
-            # distance between two vectors
-            for k in range(dim):
-                y += distance_table[i + k * tau, j + k * tau]
-            r[i, j] = math.sqrt(y)
-            r[j, i] = r[i, j]
-    # stop = timeit.default_timer()
-    # print(stop - start)
-    print(r)
-    return create_recurrence_table(r, num_vectors, persent)
-
-
-# def recurrence(x, dim, tau, persent):
+# def recurrence1(x, dim, tau, persent):
 #     # start = timeit.default_timer()
 #     n = x.shape[0]
 #     num_vectors = n - (dim - 1) * tau
@@ -107,12 +85,8 @@ def recurrence(x, dim, tau, persent):
 #         for j in range(i + 1, num_vectors):
 #             y = 0.00
 #             # distance between two vectors
-#             if(i > tau and j > tau):
-#                 y = r[i - tau, j - tau] - distance_table[i - tau, j - tau] 
-#                 + distance_table[i + (dim-1)*tau, j + (dim - 1)*tau]
-#             else:
-#                 for k in range(dim):
-#                     y += distance_table[i + k * tau, j + k * tau]
+#             for k in range(dim):
+#                 y += distance_table[i + k * tau, j + k * tau]
 #             r[i, j] = math.sqrt(y)
 #             r[j, i] = r[i, j]
 #     # stop = timeit.default_timer()
@@ -120,11 +94,40 @@ def recurrence(x, dim, tau, persent):
 #     # print("  ban dau: " + str(r))
 #     return create_recurrence_table(r, num_vectors, persent)
 
+
+def recurrence(x, dim, tau, persent):
+    # start = timeit.default_timer()
+    n = x.shape[0]
+    num_vectors = n - (dim - 1) * tau
+    r = np.zeros((num_vectors, num_vectors))
+    distance_table = np.zeros((n, n))
+    for i in range(n):
+        for j in range(i + 1, n):
+            distance_table[i, j] = (x[i] - x[j])*(x[i]- x[j])
+    for i in range(num_vectors):
+        for j in range(i + 1, num_vectors):
+            y = 0.00
+            # distance between two vectors
+            if(i >= tau):
+                y = r[i - tau, j - tau] - distance_table[i - tau, j - tau] + distance_table[i + (dim-1)*tau, j + (dim - 1)*tau]
+            else:
+                for k in range(dim):
+                    y += distance_table[i + k * tau, j + k * tau]
+            r[i, j] = y
+    for i in range(num_vectors):
+        for j in range(i + 1, num_vectors):
+            r[i, j] = math.sqrt(r[i,j])
+            r[j, i] = r[i,j]
+    # stop = timeit.default_timer()
+    # print(stop - start)
+    # print(r)
+    return create_recurrence_table(r, num_vectors, persent)
+
 tau = 2
 dim = 3
 persent = 0.2
 start = timeit.default_timer()
-# r = recurrence(samples, dim, tau, persent)
+# r, num_point = recurrence(samples, dim, tau, persent)
 r, num_point = recurrence(x, dim, tau, persent)
 stop = timeit.default_timer()
 print(stop - start)
@@ -135,18 +138,19 @@ print(stop - start)
 # cols = a.shape[1]
 # iter_row_from_0= []
 # for i in range(int(rows/2)):
-# 	iter_row_from_0.append(i)
+#   iter_row_from_0.append(i)
 # iter_row_from_1 = []
 # for i in range(1,int(rows/2)+1):
-# 	iter_row_from_1.append(-i)
+#   iter_row_from_1.append(-i)
 # for i, j in zip(iter_row_from_0, iter_row_from_1):
-# 	temp = np.array(a[i,:])
-# 	a[i,:] = a[j,:]
-# 	a[j,:] = temp	
+#   temp = np.array(a[i,:])
+#   a[i,:] = a[j,:]
+#   a[j,:] = temp   
 # plt.imshow(a, interpolation='nearest', cmap=plt.cm.ocean,
 #     extent=(0.5,np.shape(a)[0]+0.5,0.5,np.shape(a)[1]+0.5))
 # # plt.matshow(r)
 # plt.show()
+
 a = []
 b = []
 n = r.shape[0]
@@ -231,7 +235,7 @@ def calculate_MDL(frequence_l_table):
             s += frequence_l_table[i] * i
             num_l += frequence_l_table[i]
     if(num_l == 0):
-      return s
+        return s
     return s / num_l
 
 
@@ -336,7 +340,7 @@ def calculate_t1(recurrence_table, num_point):
         prev_t = j
         j = num_vector - 1
         while(j >= 0  and recurrence_table[i, j] != 1):
-        	j -= 1
+            j -= 1
         sum_t = j - prev_t
         t1.append(sum_t/(num_point - 1))
     t1_avarage = sum(t1)/len(t1)
@@ -391,12 +395,12 @@ def calculate_t22(recurrence_table):
         prev_t = j
         next_t = j
         while(j < num_vector):
-        	next_t = j
-        	while(j < num_vector and recurrence_table[i,j] == 1):
-        		j += 1
-        	while(j < num_vector and recurrence_table[i,j] == 0):
-        		j += 1
-        	num_t += 1
+            next_t = j
+            while(j < num_vector and recurrence_table[i,j] == 1):
+                j += 1
+            while(j < num_vector and recurrence_table[i,j] == 0):
+                j += 1
+            num_t += 1
         sum_t = next_t - prev_t
         if((num_t-1) == 0):
             t2.append(sum_t)
