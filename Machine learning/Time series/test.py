@@ -22,7 +22,7 @@ x = x.values
 #generate data
 volume = 0.5     # range [0.0, 1.0]
 fs = 44100      # sampling rate, Hz, must be integer
-duration = 0.1   # in seconds, may be float
+duration = 0.01   # in seconds, may be float
 f = 440.0        # sine frequency, Hz, may be float
 
 # generate samples, note conversion to float32 array
@@ -123,8 +123,8 @@ def recurrence(x, dim, tau, persent):
     # print(r)
     return create_recurrence_table(r, num_vectors, persent)
 
-tau = 30
-dim = 60
+tau = 3
+dim = 6
 persent = 0.1
 start = timeit.default_timer()
 r, num_point = recurrence(samples, dim, tau, persent)
